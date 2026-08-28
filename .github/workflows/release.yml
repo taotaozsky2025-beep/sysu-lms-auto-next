@@ -1,0 +1,44 @@
+name: Release extension
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - manifest.json
+      - content.js
+      - README.md
+      - CHANGELOG.md
+      - LICENSE
+      - .github/workflows/release.yml
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Package extension
+        shell: bash
+        run: |
+          zip -j sysu-lms-auto-next-v1.0.0.zip \
+            manifest.json content.js README.md CHANGELOG.md LICENSE
+
+      - name: Create or update v1.0.0 release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v1.0.0 >/dev/null 2>&1; then
+            gh release upload v1.0.0 sysu-lms-auto-next-v1.0.0.zip --clobber
+          else
+            gh release create v1.0.0 sysu-lms-auto-next-v1.0.0.zip \
+              --target "$GITHUB_SHA" \
+              --title "v1.0.0" \
+              --notes-file CHANGELOG.md
+          fi
+
