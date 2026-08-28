@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "中大 LMS 视频自动连播",
+  "version": "1.0.0",
+  "description": "视频实际播放结束后，自动进入下一课程活动并尝试播放。",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://lms.sysu.edu.cn/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ]
+}
+
